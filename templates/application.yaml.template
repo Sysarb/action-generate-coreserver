@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: {{ name }}
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: ssh://git@github.com/Sysarb/k8s-deployments.git
+    targetRevision: HEAD
+    path: /{{ top_domain }}/deployment/{{ customer.subdomain }}.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: coreserver
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

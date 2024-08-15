@@ -1,0 +1,164 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ name }}
+  namespace: coreserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ name }}
+  template:
+    metadata:
+      labels:
+        app: {{ name }}
+    spec:
+      containers:
+      - name: {{ name }}
+        image: ghcr.io/sysarb/coreserver:{{ version }}
+        volumeMounts:
+        - name: config-volume
+          mountPath: /app/appsettings-template.json
+          subPath: appsettings.json
+        - env:
+            - name: DOTNET_SYSARB_APIKEY
+              valueFrom:
+                secretKeyRef:
+                  name: coreserver-secret
+                  key: DOTNET_SYSARB_APIKEY
+            - name: MSSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: coreserver-secret
+                  key: MSSQL_PASSWORD
+            - name: DOTNET_ENCRYPTIONKEY
+              valueFrom:
+                secretKeyRef:
+                  name: coreserver-secret
+                  key: DOTNET_ENCRYPTIONKEY
+            - name: DOTNET_LOGINSERVICAAPIKEY
+              valueFrom:
+                secretKeyRef:
+                  name: coreserver-secret
+                  key: DOTNET_LOGINSERVICAAPIKEY
+      volumes:
+      - name: config-volume
+        configMap:
+          name: {{ name }}-appsettings
+      imagePullSecrets:
+      - name: dockerconfigjson-github-com
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ name }}-appsettings
+  namespace: coreserver
+data:
+  # Load the content of appsettings.json file as a key-value pair
+  appsettings.json: |
+    {
+      "Logging": {
+      "LogLevel": {
+      "Default": "Warning"
+      }
+    },
+    "DatabaseServerAddress": "192.168.3.30",
+    "DatabaseName": "{{ customer.subdomain }}",
+    "DatabaseUsername": "{{ customer.subdomain }}",
+    "DatabasePassword": "{{ mssql_password }}",
+    "Customer": "{{ customer.subdomain }}",
+    "ProductInstanceName": "SysarbCoreServer - {{ customer.name }} ({{ customer.subdomain }})",
+    "DefaultCulture": "sv-SE",
+    "WebUrl": "https://{{ customer.subdomain }}/",
+    "UseKeyServer": false,
+    "EncryptionKey": "{{ dotnet_encryptionkey }}",
+    "EncryptionKeyServer": "",
+    "EncryptionKeyID": "",
+    "EncryptionKeyServerPassword": "",
+    "AppLogLevel": "Warning",
+    "ElasticSearchUrl": "http://elk01.sysarb.se:9200",
+    "NewRelic.AgentEnabled": true,
+    "NewRelic.AppName": "Sysarb",
+    "UseSysarbFileService": true,
+    "SysarbFileServiceAddress": "https://fs01.sysarb.{{ top_domain }}",
+    "SysarbFileServiceSecret": "{{ dotnet_fileservicesecret }}",
+    "LoginServiceAddress": "https://login.sysarb.{{ top_domain }}",
+    "LoginServiceApiKey": "{{ dotnet_loginservicaapikey }}",
+    "IsTestEnvironment": false,
+    "UserFriendlyName": "{{ customer.name }}",
+    "Sysarb4ClientAddress": "https://sysarb.{{ top_domain }}",
+    "FortnoxCustomerNo": "16039",
+    "FortnoxIntegrationAPI": "https://fortnox-fapp-fortnoxfunc01-d.azurewebsites.net/api/Fortnox",
+    "SysarbVerificationServiceAddress": "https://api.sysarb.{{ top_domain }}",
+    "SysarbVerificationServiceRestAddress": "https://sysarb.{{ top_domain }}/api/salary-verification-service",
+    "SysarbVerificationServiceApiKey": "{{ dotnet_sysarb_apikey }}",
+    "SysarbPayManagementServiceAddress": "https://api.sysarb.{{ top_domain }}",
+    "SysarbPayManagementServiceRestAddress": "https://sysarb.{{ top_domain }}/api/pay-management-service",
+    "SysarbPayManagementServiceApiKey": "{{ dotnet_sysarb_apikey }}",
+    "SysarbDiscussionServiceRestAddress": "https://discussion.sysarb.{{ top_domain }}",
+    "SysarbDiscussionServiceApiKey": "{{ dotnet_sysarb_apikey }}",
+    "SysarbSyncServiceRestAddress": "https://sync-service.sysarb.{{ top_domain }}",
+    "SysarbSyncServiceApiKey": "{{ dotnet_sysarb_apikey }}",
+    "SysarbApiAddress": "https://sysarb.{{ top_domain }}/api",
+    "SysarbUserServiceApiKey": "{{ dotnet_sysarb_apikey }}",
+    "AllowedHosts": "*"
+    }
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ name }}
+  namespace: coreserver
+spec:
+  selector:
+    app: {{ name }}
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: ClusterIP
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ name }}-api-ingress
+  namespace: coreserver
+  labels:
+    app: {{ name }}
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: '3600'
+    nginx.ingress.kubernetes.io/proxy-send-timeout: '3600'
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    kubernetes.io/tls-acme: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/server-snippets: |
+          location / {
+          proxy_set_header Upgrade $http_upgrade;
+          proxy_http_version 1.1;
+          proxy_set_header X-Forwarded-Host $http_host;
+          proxy_set_header X-Forwarded-Proto $scheme;
+          proxy_set_header X-Forwarded-For $remote_addr;
+          proxy_set_header Host $host;
+          proxy_set_header Connection "upgrade";
+          proxy_cache_bypass $http_upgrade;
+          }
+spec:
+  rules:
+    - host: {{ customer.subdomain }} 
+      http:
+        paths:
+          - path: /api(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: {{ name }}
+                port:
+                  number: 80
+  tls:
+    - hosts:
+        - {{ customer.subdomain }} 
+      secretName: {{ name }}-tls

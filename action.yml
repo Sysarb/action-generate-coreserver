@@ -1,0 +1,14 @@
+name: 'Generate coreserver'
+description: 'Generate deployment files for coreserver'
+inputs:
+  topdomain:
+    description: 'Top domain to generate files for'
+    required: true
+    default: ''
+  version:
+    description: 'Docker image version'
+    required: true
+    default: ''
+runs:
+  using: 'node20'
+  main: 'dist/index.js'
