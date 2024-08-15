@@ -21,26 +21,26 @@ spec:
           mountPath: /app/appsettings-template.json
           subPath: appsettings.json
         - env:
-            - name: DOTNET_SYSARB_APIKEY
+            - name: DOTNET_SYSARB_API_KEY
               valueFrom:
                 secretKeyRef:
                   name: coreserver-secret
-                  key: DOTNET_SYSARB_APIKEY
+                  key: DOTNET_SYSARB_API_KEY
             - name: MSSQL_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: coreserver-secret
                   key: MSSQL_PASSWORD
-            - name: DOTNET_ENCRYPTIONKEY
+            - name: DOTNET_ENCRYPTION_KEY
               valueFrom:
                 secretKeyRef:
                   name: coreserver-secret
-                  key: DOTNET_ENCRYPTIONKEY
-            - name: DOTNET_LOGINSERVICAAPIKEY
+                  key: DOTNET_ENCRYPTION_KEY
+            - name: DOTNET_LOGIN_SERVICE_API_KEY
               valueFrom:
                 secretKeyRef:
                   name: coreserver-secret
-                  key: DOTNET_LOGINSERVICAAPIKEY
+                  key: DOTNET_LOGIN_SERVICE_API_KEY
       volumes:
       - name: config-volume
         configMap:
