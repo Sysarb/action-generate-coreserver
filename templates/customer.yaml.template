@@ -54,6 +54,7 @@ spec:
       - name: dockerconfigjson-github-com
 
 ---
+
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -111,6 +112,7 @@ data:
     }
 
 ---
+
 apiVersion: v1
 kind: Service
 metadata:
@@ -126,6 +128,7 @@ spec:
   type: ClusterIP
 
 ---
+
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
