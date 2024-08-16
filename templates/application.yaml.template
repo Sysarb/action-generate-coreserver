@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: ssh://git@github.com/Sysarb/k8s-deployments.git
     targetRevision: HEAD
-    path: /{{ top_domain }}/deployment/{{ customer.subdomain }}.yaml
+    path: coreserver/{{ top_domain }}/deployment/{{ customer.subdomain }}/
   destination:
     server: https://kubernetes.default.svc
     namespace: coreserver

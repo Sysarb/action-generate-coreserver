@@ -20,27 +20,32 @@ spec:
         - name: config-volume
           mountPath: /app/appsettings-template.json
           subPath: appsettings.json
-        - env:
-            - name: DOTNET_SYSARB_APIKEY
-              valueFrom:
-                secretKeyRef:
-                  name: coreserver-secret
-                  key: DOTNET_SYSARB_APIKEY
-            - name: MSSQL_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: coreserver-secret
-                  key: MSSQL_PASSWORD
-            - name: DOTNET_ENCRYPTIONKEY
-              valueFrom:
-                secretKeyRef:
-                  name: coreserver-secret
-                  key: DOTNET_ENCRYPTIONKEY
-            - name: DOTNET_LOGINSERVICAAPIKEY
-              valueFrom:
-                secretKeyRef:
-                  name: coreserver-secret
-                  key: DOTNET_LOGINSERVICAAPIKEY
+        env:
+        - name: DOTNET_SYSARB_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: coreserver-secret
+              key: DOTNET_SYSARB_API_KEY
+        - name: MSSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: coreserver-secret
+              key: MSSQL_PASSWORD
+        - name: DOTNET_ENCRYPTION_KEY
+          valueFrom:
+            secretKeyRef:
+              name: coreserver-secret
+              key: DOTNET_ENCRYPTION_KEY
+        - name: DOTNET_LOGIN_SERVICE_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: coreserver-secret
+              key: DOTNET_LOGIN_SERVICE_API_KEY
+        - name: DOTNET_FILE_SERVICE_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: coreserver-secret
+              key: DOTNET_FILE_SERVICE_SECRET
       volumes:
       - name: config-volume
         configMap:
@@ -58,9 +63,9 @@ data:
   # Load the content of appsettings.json file as a key-value pair
   appsettings.json: |
     {
-      "Logging": {
+    "Logging": {
       "LogLevel": {
-      "Default": "Warning"
+        "Default": "Warning"
       }
     },
     "DatabaseServerAddress": "192.168.3.30",
@@ -88,7 +93,7 @@ data:
     "IsTestEnvironment": false,
     "UserFriendlyName": "{{ customer.name }}",
     "Sysarb4ClientAddress": "https://sysarb.{{ top_domain }}",
-    "FortnoxCustomerNo": "16039",
+    "FortnoxCustomerNo": "",
     "FortnoxIntegrationAPI": "https://fortnox-fapp-fortnoxfunc01-d.azurewebsites.net/api/Fortnox",
     "SysarbVerificationServiceAddress": "https://api.sysarb.{{ top_domain }}",
     "SysarbVerificationServiceRestAddress": "https://sysarb.{{ top_domain }}/api/salary-verification-service",
