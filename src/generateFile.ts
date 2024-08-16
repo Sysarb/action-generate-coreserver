@@ -14,12 +14,9 @@ export async function generate(topdomain: string, version: string): Promise<void
     const deploymentTemplate = await fs.readFile(path.join(__dirname, "../templates/customer.yaml.template"), "utf-8");
 
     for (const instance of instances) {
-        await createFolder(path.join(topdomain, 'application'));
-        await createFolder(path.join(topdomain, 'deployment'));
         await generateFile('application', applicationTemplate, topdomain, instance, version);
-        await generateFile('deployment', deploymentTemplate, topdomain, instance, version);
+        await generateFile('deployment', deploymentTemplate, topdomain, instance, version, instance.subdomain);
     }
-
 }
 
 /**
@@ -29,8 +26,11 @@ export async function generate(topdomain: string, version: string): Promise<void
  * @param instance The instance to generate the file from.
  * @param version The version of the docker image.
  */
-async function generateFile(target:string, template: string, topdomain: string, instance: Instance, version: string): Promise<void> {
+async function generateFile(target: string, template: string, topdomain: string, instance: Instance, version: string, subdir = ''): Promise<void> {
     const name = instance.subdomain.replace(/\./g, "-");
+    const directory = path.join(topdomain, target, subdir);
+
+    await createFolder(directory);
 
     const fileContent = template
         .replace(/{{ version }}/g, version)
@@ -39,7 +39,7 @@ async function generateFile(target:string, template: string, topdomain: string, 
         .replace(/{{ customer.subdomain }}/g, instance.subdomain)
         .replace(/{{ customer.name }}/g, instance.name);
 
-    const filePath = path.join(topdomain, target, `${instance.subdomain}.yaml`);
+    const filePath = path.join(directory, `${instance.subdomain}.yaml`);
 
     await fs.writeFile(filePath, fileContent);
 }

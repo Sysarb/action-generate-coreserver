@@ -3,8 +3,13 @@ import { generate } from './generateFile';
 
 export async function run() {
     try {
-        const topdomain = core.getInput('topdomain');
-        const version = core.getInput('subdomain');
+        let topdomain = core.getInput('topdomain');
+        let version = core.getInput('subdomain');
+
+        if (process.env.CI === undefined && (topdomain === '' || version === '')) {
+            topdomain = 'dev';
+            version = 'latest';
+        }
 
         if (topdomain === '' || version === '') {
             throw new Error("Missing required input");
