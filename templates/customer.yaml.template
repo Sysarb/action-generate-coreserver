@@ -51,6 +51,11 @@ spec:
             secretKeyRef:
               name: coreserver-secret
               key: DOTNET_FILE_SERVICE_SECRET
+        - name: MSSQL_SERVER
+          valueFrom:
+            configMapKeyRef:
+              name: shared-mssql-configmap
+              key: MSSQL_SERVER
       volumes:
       - name: config-volume
         configMap:
