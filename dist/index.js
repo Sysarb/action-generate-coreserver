@@ -25062,7 +25062,7 @@ const generateFile_1 = __nccwpck_require__(5962);
 async function run() {
     try {
         const topdomain = core.getInput('topdomain', { required: true });
-        const version = core.getInput('subdomain', { required: true });
+        const version = core.getInput('version', { required: true });
         const apiKey = core.getInput('apikey', { required: true });
         if (topdomain === '' || version === '' || apiKey === '') {
             throw new Error("Missing required input");
