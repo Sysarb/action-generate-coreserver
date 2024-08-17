@@ -14,7 +14,7 @@ import { generate } from './generateFile';
 export async function run() {
     try {
         const topdomain = core.getInput('topdomain', { required: true });
-        const version = core.getInput('subdomain', { required: true });
+        const version = core.getInput('version', { required: true });
         const apiKey = core.getInput('apikey', { required: true });
 
         if (topdomain === '' || version === '' || apiKey === '') {
