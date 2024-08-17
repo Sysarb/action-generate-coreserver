@@ -41,12 +41,12 @@ runs:
     - name: Remove existing files
       shell: bash
       run: |
-        rm -rf ${{github.workspace}}/deployments/coreserver/*
+        rm -rf ${{github.workspace}}/deployments/coreserver/${{ inputs.topdomain }}
 
     - name: Copy new files
       shell: bash
       run: |
-        cp -r ${{github.action_path}}/dist/${{ inputs.token }}/ ${{github.workspace}}/deployments/coreserver/
+        cp -r ${{github.action_path}}/dist/${{ inputs.topdomain }} ${{github.workspace}}/deployments/coreserver/
     
     - name: Commit changes
       shell: bash
