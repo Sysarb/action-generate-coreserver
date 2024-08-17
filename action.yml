@@ -36,18 +36,18 @@ runs:
       with:
         repository: Sysarb/k8s-deployments
         token: ${{ inputs.token }}
-        path: ${{ env.GITHUB_WORKSPACE }}/deployments
+        path: deployments
 
     - name: Remove existing and copy new files
       shell: bash
       run: |
-        rm -rf ${{ env.GITHUB_WORKSPACE }}/deployments/coreserver/*
-        cp -r "${{ inputs.token }}/*" ${{ env.GITHUB_WORKSPACE }}/deployments/coreserver/
+        rm -rf deployments/coreserver/*
+        cp -r ${{ inputs.token }}/* deployments/coreserver/
     
     - name: Commit changes
       shell: bash
       run: |
-          cd ${{ env.GITHUB_WORKSPACE }}/deployments
+          cd deployments
           git config --global user.email "devops@sysarb.se"
           git config --global user.name "Sysarb"
           git add .
