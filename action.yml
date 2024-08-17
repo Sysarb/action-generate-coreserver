@@ -18,38 +18,39 @@ inputs:
     required: true
     default: ''
 runs:
-  using: 'composite'
-  steps:
-    - name: Generate files
-      uses: "actions/github-script@v6"
-      with:
-        script: |
-          const script = require("${{github.action_path}}/dist/index.js")
-          script({core})
-        env:
-          INPUT_TOPDOMAIN: ${{ inputs.topdomain }}
-          INPUT_VERSION: ${{ inputs.version }}
-          INPUT_APIKEY: ${{ inputs.apikey }}
-          INPUT_TOKEN: ${{ inputs.token }}
+  using: 'node20'
+  main: 'dist/index.js'
+  # steps:
+  #   - name: Generate files
+  #     uses: "actions/github-script@v6"
+  #     with:
+  #       script: |
+  #         const script = require("${{github.action_path}}/dist/index.js")
+  #         script({core})
+  #       env:
+  #         INPUT_TOPDOMAIN: ${{ inputs.topdomain }}
+  #         INPUT_VERSION: ${{ inputs.version }}
+  #         INPUT_APIKEY: ${{ inputs.apikey }}
+  #         INPUT_TOKEN: ${{ inputs.token }}
 
-    - name: Checkout deployment
-      uses: actions/checkout@v4
-      with:
-        repository: Sysarb/k8s-deployments
-        token: ${{ inputs.token }}
-        path: ./deployments
+  #   - name: Checkout deployment
+  #     uses: actions/checkout@v4
+  #     with:
+  #       repository: Sysarb/k8s-deployments
+  #       token: ${{ inputs.token }}
+  #       path: ./deployments
 
-    - name: Remove existing and copy new files
-      shell: bash
-      run: |
-        rm -rf deployments/coreserver/*
-        cp -r "${{ inputs.token }}/*" deployments/coreserver/
+  #   - name: Remove existing and copy new files
+  #     shell: bash
+  #     run: |
+  #       rm -rf deployments/coreserver/*
+  #       cp -r "${{ inputs.token }}/*" deployments/coreserver/
     
-    - name: Commit changes
-      shell: bash
-      run: |
-          git config --global user.email "devops@sysarb.se"
-          git config --global user.name "Sysarb"
-          git add .
-          git commit -m "Generate coreserver ${{ inputs.version }}"
-          git push
+  #   - name: Commit changes
+  #     shell: bash
+  #     run: |
+  #         git config --global user.email "devops@sysarb.se"
+  #         git config --global user.name "Sysarb"
+  #         git add .
+  #         git commit -m "Generate coreserver ${{ inputs.version }}"
+  #         git push
