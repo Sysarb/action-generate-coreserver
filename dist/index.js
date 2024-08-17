@@ -24977,7 +24977,7 @@ async function generate(topdomain, version, apiKey) {
  */
 async function generateFile(target, template, topdomain, instance, version, subdir = '') {
     const name = instance.subdomain.replace(/\./g, "-");
-    const directory = path_1.default.join(topdomain, target, subdir);
+    const directory = path_1.default.join(__dirname, topdomain, target, subdir);
     await createFolder(directory);
     const fileContent = template
         .replace(/{{ version }}/g, version)

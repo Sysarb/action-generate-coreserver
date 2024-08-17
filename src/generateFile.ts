@@ -29,7 +29,7 @@ export async function generate(topdomain: string, version: string, apiKey: strin
  */
 async function generateFile(target: string, template: string, topdomain: string, instance: Instance, version: string, subdir = ''): Promise<void> {
     const name = instance.subdomain.replace(/\./g, "-");
-    const directory = path.join(topdomain, target, subdir);
+    const directory = path.join(__dirname, topdomain, target, subdir);
 
     await createFolder(directory);
 
