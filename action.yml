@@ -38,10 +38,14 @@ runs:
         token: ${{ inputs.token }}
         path: deployments
 
-    - name: Remove existing and copy new files
+    - name: Remove existing files
       shell: bash
       run: |
         rm -rf ${{github.workspace}}/deployments/coreserver/*
+
+    - name: Copy new files
+      shell: bash
+      run: |
         cp -r ${{github.action_path}}/dist/${{ inputs.token }}/* ${{github.workspace}}/deployments/coreserver/
     
     - name: Commit changes
