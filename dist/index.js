@@ -24979,8 +24979,6 @@ async function generateFile(target, template, topdomain, instance, version, subd
     const name = instance.subdomain.replace(/\./g, "-");
     const directory = path_1.default.join(__dirname, topdomain, target, subdir);
     await createFolder(directory);
-    console.log(`Generating file for ${instance.subdomain}`);
-    console.log(`Directory: ${directory}`);
     const fileContent = template
         .replace(/{{ version }}/g, version)
         .replace(/{{ top_domain }}/g, topdomain)
