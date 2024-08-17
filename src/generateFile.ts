@@ -6,9 +6,10 @@ import path from "path";
  * Generate a file for each instance.
  * @param topdomain The topdomain to store the files in.
  * @param version The version of the docker image.
+ * @param apiKey The API key to use for fetching the data.
  */
-export async function generate(topdomain: string, version: string): Promise<void> {
-    const instances = await fetchData(topdomain);
+export async function generate(topdomain: string, version: string, apiKey: string): Promise<void> {
+    const instances = await fetchData(topdomain, apiKey);
 
     const applicationTemplate = await fs.readFile(path.join(__dirname, "../templates/application.yaml.template"), "utf-8");
     const deploymentTemplate = await fs.readFile(path.join(__dirname, "../templates/customer.yaml.template"), "utf-8");

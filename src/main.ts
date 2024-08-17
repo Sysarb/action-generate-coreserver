@@ -1,21 +1,27 @@
 import * as core from '@actions/core'
 import { generate } from './generateFile';
 
+/**
+ * To test this you will need to set the folloing environment variables:
+ * INPUT_TOPDOMAIN,
+ * INPUT_SUBDOMAIN,
+ * INPUT_APIKEY
+ */
+
+/**
+ * Run the action.
+ */
 export async function run() {
     try {
-        let topdomain = core.getInput('topdomain');
-        let version = core.getInput('subdomain');
+        const topdomain = core.getInput('topdomain', { required: true });
+        const version = core.getInput('subdomain', { required: true });
+        const apiKey = core.getInput('apikey', { required: true });
 
-        if (process.env.CI === undefined && (topdomain === '' || version === '')) {
-            topdomain = 'dev';
-            version = 'latest';
-        }
-
-        if (topdomain === '' || version === '') {
+        if (topdomain === '' || version === '' || apiKey === '') {
             throw new Error("Missing required input");
         }
 
-        await generate(topdomain, version);
+        await generate(topdomain, version, apiKey);
     } catch (error) {
         console.error(error);
         core.setFailed("Failure")
