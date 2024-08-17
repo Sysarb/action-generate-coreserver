@@ -41,8 +41,8 @@ runs:
     - name: Remove existing and copy new files
       shell: bash
       run: |
-        rm -rf deployments/coreserver/*
-        cp -r ${{ inputs.token }}/* deployments/coreserver/
+        rm -rf ${{github.workspace}}/deployments/coreserver/*
+        cp -r ${{ inputs.token }}/* ${{github.workspace}}/deployments/coreserver/
     
     - name: Commit changes
       shell: bash
