@@ -22,16 +22,14 @@ runs:
   # main: 'dist/index.js'
   steps:
     - name: Generate files
-      uses: "actions/github-script@v6"
-      with:
-        script: |
-          const script = require("${{github.action_path}}/dist/index.js")
-          script({core})
-        # env:
-        #   INPUT_TOPDOMAIN: ${{ inputs.topdomain }}
-        #   INPUT_VERSION: ${{ inputs.version }}
-        #   INPUT_APIKEY: ${{ inputs.apikey }}
-        #   INPUT_TOKEN: ${{ inputs.token }}
+      shell: bash
+      run: | 
+        node ${{github.action_path}}/dist/index.js
+      # env:
+      #   INPUT_TOPDOMAIN: ${{ inputs.topdomain }}
+      #   INPUT_VERSION: ${{ inputs.version }}
+      #   INPUT_APIKEY: ${{ inputs.apikey }}
+      #   INPUT_TOKEN: ${{ inputs.token }}
 
     - name: Checkout deployment
       uses: actions/checkout@v4
