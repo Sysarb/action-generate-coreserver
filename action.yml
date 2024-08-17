@@ -20,15 +20,17 @@ inputs:
 runs:
   using: 'composite'
   steps:
+    # If core.getInput is broken uncomment the following:
+    # env:
+    #   INPUT_TOPDOMAIN: ${{ inputs.topdomain }}
+    #   INPUT_VERSION: ${{ inputs.version }}
+    #   INPUT_APIKEY: ${{ inputs.apikey }}
     - name: Generate files
-      shell: bash
-      # If core.getInput is broken uncomment the following:
-      # env:
-      #   INPUT_TOPDOMAIN: ${{ inputs.topdomain }}
-      #   INPUT_VERSION: ${{ inputs.version }}
-      #   INPUT_APIKEY: ${{ inputs.apikey }}
-      run: |
-        node dist/index.js
+      uses: "actions/github-script@v6"
+      with:
+        script: |
+          const script = require("${{github.action_path}}/dist/index.js")
+          script({core})
 
     - name: Checkout deployment
       uses: actions/checkout@v4
