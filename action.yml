@@ -25,11 +25,11 @@ runs:
       shell: bash
       run: | 
         node ${{github.action_path}}/dist/index.js
-      # env:
-      #   INPUT_TOPDOMAIN: ${{ inputs.topdomain }}
-      #   INPUT_VERSION: ${{ inputs.version }}
-      #   INPUT_APIKEY: ${{ inputs.apikey }}
-      #   INPUT_TOKEN: ${{ inputs.token }}
+      env:
+        INPUT_TOPDOMAIN: ${{ inputs.topdomain }}
+        INPUT_VERSION: ${{ inputs.version }}
+        INPUT_APIKEY: ${{ inputs.apikey }}
+        INPUT_TOKEN: ${{ inputs.token }}
 
     - name: Checkout deployment
       uses: actions/checkout@v4
