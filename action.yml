@@ -42,7 +42,7 @@ runs:
       shell: bash
       run: |
         rm -rf ${{github.workspace}}/deployments/coreserver/*
-        cp -r ${{ inputs.token }}/* ${{github.workspace}}/deployments/coreserver/
+        cp -r ${{github.action_path}}/dist/${{ inputs.token }}/* ${{github.workspace}}/deployments/coreserver/
     
     - name: Commit changes
       shell: bash
