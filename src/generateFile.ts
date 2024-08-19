@@ -10,11 +10,9 @@ import path from "path";
 export async function generate(topdomain: string, apiKey: string): Promise<void> {
     const instances = await fetchData(topdomain, apiKey);
 
-    const applicationTemplate = await fs.readFile(path.join(__dirname, "../templates/application.yaml.template"), "utf-8");
     const deploymentTemplate = await fs.readFile(path.join(__dirname, "../templates/customer.yaml.template"), "utf-8");
 
     for (const instance of instances) {
-        await generateFile('application', applicationTemplate, topdomain, instance);
         await generateFile('deployment', deploymentTemplate, topdomain, instance, instance.subdomain);
     }
 }

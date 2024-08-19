@@ -24960,10 +24960,8 @@ const path_1 = __importDefault(__nccwpck_require__(1017));
  */
 async function generate(topdomain, apiKey) {
     const instances = await (0, fetchList_1.fetchData)(topdomain, apiKey);
-    const applicationTemplate = await promises_1.default.readFile(path_1.default.join(__dirname, "../templates/application.yaml.template"), "utf-8");
     const deploymentTemplate = await promises_1.default.readFile(path_1.default.join(__dirname, "../templates/customer.yaml.template"), "utf-8");
     for (const instance of instances) {
-        await generateFile('application', applicationTemplate, topdomain, instance);
         await generateFile('deployment', deploymentTemplate, topdomain, instance, instance.subdomain);
     }
 }
@@ -25060,9 +25058,6 @@ const generateFile_1 = __nccwpck_require__(5962);
  */
 async function run() {
     try {
-        // const topdomain = core.getInput('topdomain', { required: true });
-        // const version = core.getInput('version', { required: true });
-        // const apiKey = core.getInput('apikey', { required: true });
         const topdomain = process.env.INPUT_TOPDOMAIN || '';
         const apiKey = process.env.INPUT_APIKEY || '';
         if (topdomain === '' || apiKey === '') {

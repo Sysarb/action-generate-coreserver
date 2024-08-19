@@ -13,9 +13,6 @@ import { generate } from './generateFile';
  */
 export async function run() {
     try {
-        // const topdomain = core.getInput('topdomain', { required: true });
-        // const version = core.getInput('version', { required: true });
-        // const apiKey = core.getInput('apikey', { required: true });
         const topdomain = process.env.INPUT_TOPDOMAIN || '';
         const apiKey = process.env.INPUT_APIKEY || '';
 
