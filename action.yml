@@ -5,10 +5,6 @@ inputs:
     description: 'Top domain to generate files for'
     required: true
     default: ''
-  version:
-    description: 'Docker image version'
-    required: true
-    default: ''
   apikey:
     description: 'API key for the domain'
     required: true
@@ -27,7 +23,6 @@ runs:
         node ${{github.action_path}}/dist/index.js
       env:
         INPUT_TOPDOMAIN: ${{ inputs.topdomain }}
-        INPUT_VERSION: ${{ inputs.version }}
         INPUT_APIKEY: ${{ inputs.apikey }}
         INPUT_TOKEN: ${{ inputs.token }}
 
