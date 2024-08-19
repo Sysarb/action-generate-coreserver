@@ -24,6 +24,11 @@ spec:
           mountPath: /app/appsettings-template.json
           subPath: appsettings.json
         env:
+        - name: MSSQL_CREATOR_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: coreserver-secret
+              key: MSSQL_CREATOR_PASSWORD
         - name: MSSQL_PASSWORD
           valueFrom:
             secretKeyRef:
