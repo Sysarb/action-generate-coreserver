@@ -20,6 +20,9 @@ spec:
         volumeMounts:
         - name: shared-data
           mountPath: /usr/scripts
+        - name: config-volume
+          mountPath: /app/appsettings-template.json
+          subPath: appsettings.json
         env:
         - name: MSSQL_PASSWORD
           valueFrom:
