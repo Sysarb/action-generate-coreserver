@@ -38,7 +38,7 @@ spec:
               key: MSSQL_SERVER
       containers:
       - name: {{ name }}
-        image: ghcr.io/sysarb/coreserver:{{ version }}
+        image: ghcr.io/sysarb/core-server:{{ version }}
         resources:
           requests:
             memory: "256Mi"  # Requesting 256Mi of memory
