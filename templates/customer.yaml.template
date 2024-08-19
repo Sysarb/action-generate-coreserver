@@ -13,6 +13,29 @@ spec:
       labels:
         app: {{ name }}
     spec:
+      initContainers:
+      - name: coreserver-db-init
+        image: mcr.microsoft.com/mssql-tools
+        command: ["/bin/sh", "-c", "cp /usr/scripts/run-sql.sh /tmp/ && chmod +x /tmp/run-sql.sh && /tmp/run-sql.sh"]
+        volumeMounts:
+        - name: shared-data
+          mountPath: /usr/scripts
+        env:
+        - name: MSSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: coreserver-secret
+              key: MSSQL_PASSWORD
+        - name: MSSQL_DATA_PATH
+          valueFrom:
+            configMapKeyRef:
+              name: shared-mssql-configmap
+              key: MSSQL_DATA_PATH
+        - name: MSSQL_SERVER
+          valueFrom:
+            configMapKeyRef:
+              name: shared-mssql-configmap
+              key: MSSQL_SERVER
       containers:
       - name: {{ name }}
         image: ghcr.io/sysarb/coreserver:{{ version }}
@@ -60,6 +83,9 @@ spec:
       - name: config-volume
         configMap:
           name: {{ name }}-appsettings
+      - name: shared-data
+        configMap:
+          name: coreserver-db-init
       imagePullSecrets:
       - name: dockerconfigjson-github-com
 
