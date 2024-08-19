@@ -24956,16 +24956,15 @@ const path_1 = __importDefault(__nccwpck_require__(1017));
 /**
  * Generate a file for each instance.
  * @param topdomain The topdomain to store the files in.
- * @param version The version of the docker image.
  * @param apiKey The API key to use for fetching the data.
  */
-async function generate(topdomain, version, apiKey) {
+async function generate(topdomain, apiKey) {
     const instances = await (0, fetchList_1.fetchData)(topdomain, apiKey);
     const applicationTemplate = await promises_1.default.readFile(path_1.default.join(__dirname, "../templates/application.yaml.template"), "utf-8");
     const deploymentTemplate = await promises_1.default.readFile(path_1.default.join(__dirname, "../templates/customer.yaml.template"), "utf-8");
     for (const instance of instances) {
-        await generateFile('application', applicationTemplate, topdomain, instance, version);
-        await generateFile('deployment', deploymentTemplate, topdomain, instance, version, instance.subdomain);
+        await generateFile('application', applicationTemplate, topdomain, instance);
+        await generateFile('deployment', deploymentTemplate, topdomain, instance, instance.subdomain);
     }
 }
 /**
@@ -24973,14 +24972,14 @@ async function generate(topdomain, version, apiKey) {
  * @param target The target directory to store the file in.
  * @param topdomain Subdirectory to store the file in.
  * @param instance The instance to generate the file from.
- * @param version The version of the docker image.
+ * @param subdir The subdirectory to store the file in.
  */
-async function generateFile(target, template, topdomain, instance, version, subdir = '') {
+async function generateFile(target, template, topdomain, instance, subdir = '') {
     const name = instance.subdomain.replace(/\./g, "-");
     const directory = path_1.default.join(__dirname, topdomain, target, subdir);
     await createFolder(directory);
     const fileContent = template
-        .replace(/{{ version }}/g, version)
+        .replace(/{{ version }}/g, instance.version)
         .replace(/{{ top_domain }}/g, topdomain)
         .replace(/{{ name }}/g, name)
         .replace(/{{ customer.subdomain }}/g, instance.subdomain)
@@ -25065,12 +25064,11 @@ async function run() {
         // const version = core.getInput('version', { required: true });
         // const apiKey = core.getInput('apikey', { required: true });
         const topdomain = process.env.INPUT_TOPDOMAIN || '';
-        const version = process.env.INPUT_VERSION || '';
         const apiKey = process.env.INPUT_APIKEY || '';
-        if (topdomain === '' || version === '' || apiKey === '') {
+        if (topdomain === '' || apiKey === '') {
             throw new Error("Missing required input");
         }
-        await (0, generateFile_1.generate)(topdomain, version, apiKey);
+        await (0, generateFile_1.generate)(topdomain, apiKey);
     }
     catch (error) {
         console.error(error);
