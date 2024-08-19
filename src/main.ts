@@ -17,14 +17,13 @@ export async function run() {
         // const version = core.getInput('version', { required: true });
         // const apiKey = core.getInput('apikey', { required: true });
         const topdomain = process.env.INPUT_TOPDOMAIN || '';
-        const version = process.env.INPUT_VERSION || '';
         const apiKey = process.env.INPUT_APIKEY || '';
 
-        if (topdomain === '' || version === '' || apiKey === '') {
+        if (topdomain === '' || apiKey === '') {
             throw new Error("Missing required input");
         }
 
-        await generate(topdomain, version, apiKey);
+        await generate(topdomain, apiKey);
     } catch (error) {
         console.error(error);
         core.setFailed("Failure")
