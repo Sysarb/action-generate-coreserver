@@ -50,5 +50,5 @@ runs:
           git config --global user.email "devops@sysarb.se"
           git config --global user.name "Sysarb"
           git add .
-          git commit -m "Generate coreserver ${{ inputs.version }}"
+          git diff-index --quiet HEAD || git commit -m "Generate coreserver ${{ inputs.version }}"
           git push

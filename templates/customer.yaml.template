@@ -131,7 +131,7 @@ data:
     "NewRelic.AgentEnabled": true,
     "NewRelic.AppName": "Sysarb",
     "UseSysarbFileService": true,
-    "SysarbFileServiceAddress": "https://fs01.sysarb.{{ top_domain }}",
+    "SysarbFileServiceAddress": "https://fs.sysarb.{{ top_domain }}",
     "SysarbFileServiceSecret": "{{ dotnet_file_service_secret }}",
     "LoginServiceAddress": "https://login.sysarb.{{ top_domain }}",
     "LoginServiceApiKey": "{{ dotnet_login_service_api_key }}",
