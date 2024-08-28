@@ -44,6 +44,11 @@ spec:
             configMapKeyRef:
               name: shared-mssql-configmap
               key: MSSQL_SERVER
+        - name: DOTNET_SYSARB_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: coreserver-secret
+              key: DOTNET_SYSARB_API_KEY
       containers:
       - name: {{ name }}
         image: ghcr.io/sysarb/core-server:{{ version }}
