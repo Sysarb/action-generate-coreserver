@@ -54,10 +54,6 @@ spec:
       containers:
       - name: {{ name }}
         image: ghcr.io/sysarb/core-server:{{ version }}
-        lifecycle:
-          postStart:
-            exec:
-              command: ["/bin/bash", "-c", "cp /tmp/poststart-temp.sh /tmp/poststart.sh && chmod +x /tmp/poststart.sh && /tmp/poststart.sh"]
         resources:
           requests:
             memory: "256Mi"  # Requesting 256Mi of memory
