@@ -23,8 +23,6 @@ spec:
         - name: config-volume
           mountPath: /app/appsettings-template.json
           subPath: appsettings.json
-        - name: poststart
-          mountPath: /tmp/poststart-temp.sh
         env:
         - name: MSSQL_CREATOR_PASSWORD
           valueFrom:
@@ -63,6 +61,9 @@ spec:
         - name: config-volume
           mountPath: /app/appsettings-template.json
           subPath: appsettings.json
+        - name: poststart
+          mountPath: /tmp/poststart-temp.sh
+          subPath: poststart.sh
         env:
         - name: DOTNET_SYSARB_API_KEY
           valueFrom:
