@@ -23,6 +23,8 @@ spec:
         - name: config-volume
           mountPath: /app/appsettings-template.json
           subPath: appsettings.json
+        - name: poststart
+          mountPath: /tmp/poststart-temp.sh
         env:
         - name: MSSQL_CREATOR_PASSWORD
           valueFrom:
@@ -52,6 +54,10 @@ spec:
       containers:
       - name: {{ name }}
         image: ghcr.io/sysarb/core-server:{{ version }}
+        lifecycle:
+          postStart:
+            exec:
+              command: ["/bin/bash", "-c", "cp /tmp/poststart-temp.sh /tmp/poststart.sh && chmod +x /tmp/poststart.sh && /tmp/poststart.sh"]
         resources:
           requests:
             memory: "256Mi"  # Requesting 256Mi of memory
@@ -99,6 +105,9 @@ spec:
       - name: shared-data
         configMap:
           name: coreserver-db-init
+      - name: poststart
+        configMap:
+          name: coreserver-poststart
       imagePullSecrets:
       - name: dockerconfigjson-github-com
 
