@@ -34,6 +34,7 @@ async function generateFile(target: string, template: string, topdomain: string,
         .replace(/{{ version }}/g, instance.version)
         .replace(/{{ top_domain }}/g, topdomain)
         .replace(/{{ name }}/g, name)
+        .replace(/{{ replicas }}/g, instance.replicas.toString())
         .replace(/{{ customer.subdomain }}/g, instance.subdomain)
         .replace(/{{ customer.name }}/g, instance.name);
 

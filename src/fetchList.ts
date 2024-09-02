@@ -3,6 +3,7 @@ export type Instance = {
     subdomain: string;
     name: string;
     version: string;
+    replicas: number;
 };
 
 export async function fetchData(subdomain: string, apiKey: string): Promise<Instance[]> {
