@@ -14,6 +14,8 @@ spec:
       labels:
         app: {{ name }}
     spec:
+      nodeSelector:
+        sysarb_intel: "true"
       initContainers:
       - name: coreserver-db-init
         image: mcr.microsoft.com/mssql-tools
