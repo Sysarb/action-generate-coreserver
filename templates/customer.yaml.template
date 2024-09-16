@@ -23,6 +23,8 @@ spec:
         volumeMounts:
         - name: shared-data
           mountPath: /usr/scripts
+        - name: sql-restore-script
+          mountPath: /usr/scripts2
         - name: config-volume
           mountPath: /app/appsettings-template.json
           subPath: appsettings.json
@@ -67,8 +69,6 @@ spec:
         - name: poststart
           mountPath: /tmp/poststart-temp.sh
           subPath: poststart.sh
-        - name: sql-restore-script
-          mountPath: /usr/scripts
         env:
         - name: DOTNET_SYSARB_API_KEY
           valueFrom:
