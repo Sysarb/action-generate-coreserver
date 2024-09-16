@@ -67,6 +67,8 @@ spec:
         - name: poststart
           mountPath: /tmp/poststart-temp.sh
           subPath: poststart.sh
+        - name: sql-restore-script
+          mountPath: /usr/scripts
         env:
         - name: DOTNET_SYSARB_API_KEY
           valueFrom:
@@ -108,6 +110,9 @@ spec:
       - name: poststart
         configMap:
           name: coreserver-poststart
+      - name: sql-restore-script
+        configMap:
+          name: coreserver-db-template-restore
       imagePullSecrets:
       - name: dockerconfigjson-github-com
 
