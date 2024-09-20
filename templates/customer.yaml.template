@@ -132,7 +132,7 @@ data:
         "Default": "Warning"
       }
     },
-    "DatabaseServerAddress": "192.168.3.30",
+    "DatabaseServerAddress": "{{ mssql_server }}",
     "DatabaseName": "{{ customer.subdomain }}",
     "DatabaseUsername": "{{ customer.subdomain }}",
     "DatabasePassword": "{{ mssql_password }}",
