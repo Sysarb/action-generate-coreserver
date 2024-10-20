@@ -61,7 +61,7 @@ spec:
           requests:
             memory: "256Mi"  # Requesting 256Mi of memory
           limits:
-            memory: "4Gi"    # Limiting to 4Gi of memory to avoid cluster getting fubar
+            memory: "8Gi"    # Limiting to 8Gi of memory to avoid cluster getting fubar
         volumeMounts:
         - name: config-volume
           mountPath: /app/appsettings-template.json
