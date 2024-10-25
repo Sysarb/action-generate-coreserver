@@ -30,7 +30,15 @@ async function generateFile(target: string, template: string, topdomain: string,
 
     await createFolder(directory);
 
+    // Stopid file service url fix for app, should be removed when app is updated
+    let fileServiceUrl = 'https://sysarb.{{ top_domain }}/api/file-service'
+
+    if (topdomain === 'app') {
+        fileServiceUrl = 'http://fs.sysarb.se';
+    }
+
     const fileContent = template
+        .replace(/{{ fileservice }}/g, fileServiceUrl)
         .replace(/{{ version }}/g, instance.version)
         .replace(/{{ top_domain }}/g, topdomain)
         .replace(/{{ name }}/g, name)
