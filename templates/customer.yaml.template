@@ -159,7 +159,7 @@ data:
     "Sysarb4ClientAddress": "https://sysarb.{{ top_domain }}",
     "FortnoxCustomerNo": "",
     "FortnoxIntegrationAPI": "https://fortnox-fapp-fortnoxfunc01-d.azurewebsites.net/api/Fortnox",
-    "SysarbVerificationServiceAddress": "https://sysarb.{{ top_domain }}",
+    "SysarbVerificationServiceAddress": "https://sysarb.{{ top_domain }}/api/import-service",
     "SysarbVerificationServiceRestAddress": "https://sysarb.{{ top_domain }}/api/import-service",
     "SysarbVerificationServiceApiKey": "{{ dotnet_sysarb_api_key }}",
     "SysarbPayManagementServiceAddress": "https://sysarb.{{ top_domain }}/api/pay-management-service",
