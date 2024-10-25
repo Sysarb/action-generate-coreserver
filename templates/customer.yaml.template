@@ -162,7 +162,7 @@ data:
     "SysarbVerificationServiceAddress": "https://sysarb.{{ top_domain }}/api/import-service",
     "SysarbVerificationServiceRestAddress": "https://sysarb.{{ top_domain }}/api/import-service",
     "SysarbVerificationServiceApiKey": "{{ dotnet_sysarb_api_key }}",
-    "SysarbPayManagementServiceAddress": "https://sysarb.{{ top_domain }}/api/pay-management-service",
+    "SysarbPayManagementServiceAddress": "https://api.sysarb.{{ top_domain }}",
     "SysarbPayManagementServiceRestAddress": "https://pay-management.sysarb.{{ top_domain }}",
     "SysarbPayManagementServiceApiKey": "{{ dotnet_sysarb_api_key }}",
     "SysarbDiscussionServiceRestAddress": "https://sysarb.{{ top_domain }}/api/discussion-service",
