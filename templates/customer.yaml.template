@@ -232,4 +232,4 @@ spec:
   tls:
     - hosts:
         - {{ customer.subdomain }} 
-      secretName: {{ name }}-tls
+      secretName: sysarb-wildcard-tls
