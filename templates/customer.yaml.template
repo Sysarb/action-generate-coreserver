@@ -219,7 +219,7 @@ metadata:
           }
 spec:
   rules:
-    - host: {{ customer.subdomain }} 
+    - host: {{ customer.subdomain }}
       http:
         paths:
           - path: /api(/|$)(.*)
@@ -231,5 +231,5 @@ spec:
                   number: 80
   tls:
     - hosts:
-        - {{ customer.subdomain }} 
+        - {{ customer.subdomain }}
       secretName: sysarb-wildcard-tls
