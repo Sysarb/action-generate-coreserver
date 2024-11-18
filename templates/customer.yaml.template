@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ name }}
+  name: sys-{{ name }}
   namespace: coreserver
 spec:
   replicas: {{ replicas }}
   revisionHistoryLimit: 1
   selector:
     matchLabels:
-      app: {{ name }}
+      app: sys-{{ name }}
   template:
     metadata:
       labels:
-        app: {{ name }}
+        app: sys-{{ name }}
     spec:
       nodeSelector:
         sysarb_intel: "true"
@@ -55,7 +55,7 @@ spec:
               name: coreserver-secret
               key: DOTNET_SYSARB_API_KEY
       containers:
-      - name: {{ name }}
+      - name: sys-{{ name }}
         image: ghcr.io/sysarb/core-server:{{ version }}
         resources:
           requests:
@@ -103,7 +103,7 @@ spec:
       volumes:
       - name: config-volume
         configMap:
-          name: {{ name }}-appsettings
+          name: sys-{{ name }}-appsettings
       - name: shared-data
         configMap:
           name: coreserver-db-init
@@ -121,7 +121,7 @@ spec:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ name }}-appsettings
+  name: sys-{{ name }}-appsettings
   namespace: coreserver
 data:
   # Load the content of appsettings.json file as a key-value pair
@@ -179,11 +179,11 @@ data:
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ name }}
+  name: sys-{{ name }}
   namespace: coreserver
 spec:
   selector:
-    app: {{ name }}
+    app: sys-{{ name }}
   ports:
     - protocol: TCP
       port: 80
@@ -195,12 +195,13 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ name }}-api-ingress
+  name: sys-{{ name }}-api-ingress
   namespace: coreserver
   labels:
-    app: {{ name }}
+    app: sys-{{ name }}
   annotations:
     kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/proxy-body-size: "400m"
     nginx.ingress.kubernetes.io/proxy-read-timeout: '3600'
     nginx.ingress.kubernetes.io/proxy-send-timeout: '3600'
     cert-manager.io/cluster-issuer: letsencrypt-prod
@@ -226,7 +227,7 @@ spec:
             pathType: ImplementationSpecific
             backend:
               service:
-                name: {{ name }}
+                name: sys-{{ name }}
                 port:
                   number: 80
   tls:
