@@ -29,8 +29,6 @@ spec:
           mountPath: /app/appsettings-template.json
           subPath: appsettings.json
         env:
-        - name: COMPlus_GCHeapHardLimitSegment
-          value: "8589934592" 
         - name: MSSQL_CREATOR_PASSWORD
           valueFrom:
             secretKeyRef:
@@ -72,6 +70,8 @@ spec:
           mountPath: /tmp/poststart-temp.sh
           subPath: poststart.sh
         env:
+        - name: COMPlus_GCHeapHardLimitSegment
+          value: "8589934592" 
         - name: DOTNET_SYSARB_API_KEY
           valueFrom:
             secretKeyRef:
