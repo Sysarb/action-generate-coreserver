@@ -236,3 +236,48 @@ spec:
     - hosts:
         - {{ customer.subdomain }}
       secretName: sysarb-wildcard-tls
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    kubernetes.io/tls-acme: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: 100m
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/server-snippets: |
+      location / {
+      proxy_set_header Upgrade $http_upgrade;
+      proxy_http_version 1.1;
+      proxy_set_header X-Forwarded-Host $http_host;
+      proxy_set_header X-Forwarded-Proto $scheme;
+      proxy_set_header X-Forwarded-For $remote_addr;
+      proxy_set_header Host $host;
+      proxy_set_header Connection "upgrade";
+      proxy_cache_bypass $http_upgrade;
+      }
+    nginx.ingress.kubernetes.io/use-regex: "true"
+  labels:
+    app: sys-{{ name }}
+  name: sys-{{ name }}-api-core-ingress
+  namespace: coreserver
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: sysarb.{{ topdomain }}    
+    http:
+      paths:
+      - backend:
+          service:
+            name: sys-{{ name }}
+            port:
+              number: 80
+        path: /api/coreserver/sys-{{ name }}(/|$)(.*)
+        pathType: ImplementationSpecific
+  tls:
+  - hosts:
+    - sysarb.{{ topdomain }}
+    secretName: sysarb-{{ topdomain }}-tls
