@@ -267,7 +267,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: sysarb.{{ topdomain }}    
+  - host: sysarb.{{ top_domain }}    
     http:
       paths:
       - backend:
@@ -279,5 +279,5 @@ spec:
         pathType: ImplementationSpecific
   tls:
   - hosts:
-    - sysarb.{{ topdomain }}
-    secretName: sysarb-{{ topdomain }}-tls
+    - sysarb.{{ top_domain }}
+    secretName: sysarb-{{ top_domain }}-tls
