@@ -102,6 +102,8 @@ spec:
             configMapKeyRef:
               name: shared-mssql-configmap
               key: MSSQL_SERVER
+        - name: ASPNETCORE_URLS
+          value: "http://+:80"
       volumes:
       - name: config-volume
         configMap:
