@@ -71,7 +71,7 @@ spec:
           subPath: poststart.sh
         env:
         - name: COMPlus_GCHeapHardLimitSegment
-          value: "8589934592" 
+          value: "8589934592"
         - name: DOTNET_SYSARB_API_KEY
           valueFrom:
             secretKeyRef:
@@ -271,7 +271,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: sysarb.{{ top_domain }}    
+  - host: sysarb.{{ top_domain }}
     http:
       paths:
       - backend:
