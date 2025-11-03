@@ -133,7 +133,7 @@ data:
     {
     "Logging": {
       "LogLevel": {
-        "Default": "Trace"
+        "Default": "Warning"
       }
     },
     "DatabaseServerAddress": "{{ mssql_server }}",
@@ -149,7 +149,7 @@ data:
     "EncryptionKeyServer": "",
     "EncryptionKeyID": "",
     "EncryptionKeyServerPassword": "",
-    "AppLogLevel": "Debug",
+    "AppLogLevel": "Warning",
     "ElasticSearchUrl": "http://elk01.sysarb.se:9200",
     "FortnoxIntegrationAPI": "https://fortnox-fapp-fortnoxfunc01-d.azurewebsites.net/api/Fortnox",
     "NewRelic.AgentEnabled": true,
