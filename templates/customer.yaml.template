@@ -104,6 +104,22 @@ spec:
               key: MSSQL_SERVER
         - name: ASPNETCORE_URLS
           value: "http://+:80"
+        - name: OTEL_SERVICE_NAME
+          value: sys-{{ name }}-core
+        - name: OTEL_SERVICE_VERSION
+          value: "{{ version }}"
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: "http://signoz-otel-collector.platform.svc.cluster.local:4318"
+        - name: OTEL_EXPORTER_OTLP_PROTOCOL
+          value: "http/protobuf"
+        - name: OTEL_RESOURCE_ATTRIBUTES
+          value: "deployment.environment=production,service.namespace=coreserver"
+        - name: OTEL_TRACES_EXPORTER
+          value: "otlp"
+        - name: OTEL_METRICS_EXPORTER
+          value: "otlp"
+        - name: OTEL_LOGS_EXPORTER
+          value: "otlp"
       volumes:
       - name: config-volume
         configMap:
@@ -149,7 +165,7 @@ data:
     "EncryptionKeyServer": "",
     "EncryptionKeyID": "",
     "EncryptionKeyServerPassword": "",
-    "AppLogLevel": "Warning",
+    "AppLogLevel": "Debug",
     "ElasticSearchUrl": "http://elk01.sysarb.se:9200",
     "FortnoxIntegrationAPI": "https://fortnox-fapp-fortnoxfunc01-d.azurewebsites.net/api/Fortnox",
     "NewRelic.AgentEnabled": true,
