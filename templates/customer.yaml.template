@@ -57,6 +57,10 @@ spec:
       containers:
       - name: sys-{{ name }}
         image: ghcr.io/sysarb/core-server:{{ version }}
+        lifecycle:
+          postStart:
+            exec:
+              command: ["/bin/bash", "/usr/scripts/poststart/poststart.sh"]
         resources:
           requests:
             memory: "256Mi"  # Requesting 256Mi of memory
@@ -67,8 +71,7 @@ spec:
           mountPath: /app/appsettings-template.json
           subPath: appsettings.json
         - name: poststart
-          mountPath: /tmp/poststart-temp.sh
-          subPath: poststart.sh
+          mountPath: /usr/scripts/poststart
         env:
         - name: COMPlus_GCHeapHardLimitSegment
           value: "8589934592"
@@ -130,6 +133,7 @@ spec:
       - name: poststart
         configMap:
           name: coreserver-poststart
+          defaultMode: 0755
       - name: sql-restore-script
         configMap:
           name: coreserver-db-template-restore
