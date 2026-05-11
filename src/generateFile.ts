@@ -17,6 +17,11 @@ export async function generate(topdomain: string, apiKey: string): Promise<void>
     }
 }
 
+function replaceAllCharsNotWorkingInPath(str: string): string {
+    // Replace all characters that are not allowed in file paths with a hyphen.
+    return str.replace(/[^a-zA-Z0-9-_]/g, '-');
+}
+
 /**
  * Generate a file from an instances.
  * @param target The target directory to store the file in.
@@ -44,7 +49,7 @@ async function generateFile(target: string, template: string, topdomain: string,
         .replace(/{{ name }}/g, name)
         .replace(/{{ replicas }}/g, instance.replicas.toString())
         .replace(/{{ customer.subdomain }}/g, instance.subdomain)
-        .replace(/{{ customer.name }}/g, instance.name);
+        .replace(/{{ customer.name }}/g, replaceAllCharsNotWorkingInPath(instance.name));
 
     const filePath = path.join(directory, `${instance.subdomain}.yaml`);
 
