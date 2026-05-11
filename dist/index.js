@@ -25671,6 +25671,10 @@ async function generate(topdomain, apiKey) {
         await generateFile('deployment', deploymentTemplate, topdomain, instance, instance.subdomain);
     }
 }
+function replaceAllCharsNotWorkingInPath(str) {
+    // Replace all characters that are not allowed in file paths with a hyphen.
+    return str.replace(/[^a-zA-Z0-9-_]/g, '-');
+}
 /**
  * Generate a file from an instances.
  * @param target The target directory to store the file in.
@@ -25694,7 +25698,7 @@ async function generateFile(target, template, topdomain, instance, subdir = '') 
         .replace(/{{ name }}/g, name)
         .replace(/{{ replicas }}/g, instance.replicas.toString())
         .replace(/{{ customer.subdomain }}/g, instance.subdomain)
-        .replace(/{{ customer.name }}/g, instance.name);
+        .replace(/{{ customer.name }}/g, replaceAllCharsNotWorkingInPath(instance.name));
     const filePath = path_1.default.join(directory, `${instance.subdomain}.yaml`);
     await promises_1.default.writeFile(filePath, fileContent);
 }
