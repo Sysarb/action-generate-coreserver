@@ -197,7 +197,9 @@ data:
     "SysarbVerificationServiceApiKey": "{{ dotnet_sysarb_api_key }}",
     "SysarbFileServiceSecret": "{{ dotnet_file_service_secret }}",
     "LoginServiceApiKey": "{{ dotnet_login_service_api_key }}",
-    "AllowedHosts": "*"
+    "AllowedHosts": "*",
+    "SubDomain": "{{ customer.subdomain }}",
+    "TenantId": "{{ tenantId }}"
     }
 
 ---

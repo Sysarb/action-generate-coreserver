@@ -25698,6 +25698,7 @@ async function generateFile(target, template, topdomain, instance, subdir = '') 
         .replace(/{{ name }}/g, name)
         .replace(/{{ replicas }}/g, instance.replicas.toString())
         .replace(/{{ customer.subdomain }}/g, instance.subdomain)
+        .replace(/{{ tenantId }}/g, instance.id)
         .replace(/{{ customer.name }}/g, replaceAllCharsNotWorkingInPath(instance.name));
     const filePath = path_1.default.join(directory, `${instance.subdomain}.yaml`);
     await promises_1.default.writeFile(filePath, fileContent);
