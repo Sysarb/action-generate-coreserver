@@ -35,16 +35,22 @@ async function generateFile(target: string, template: string, topdomain: string,
 
     await createFolder(directory);
 
-    // Stopid file service url fix for app, should be removed when app is updated
-    let fileServiceUrl = 'https://sysarb.{{ top_domain }}/api/file-service'
+    let image = '';
+    let version = '';
 
-    if (topdomain === 'app') {
-        fileServiceUrl = 'http://fs.sysarb.se';
+    // If the version does not include 'ghcr.io/', prepend it with 'ghcr.io/sysarb/core-server:'.
+    // This allows for both full image names and just version numbers to be used in the instance data.
+    if (!instance.version.includes('ghcr.io/')) {
+        image = `ghcr.io/sysarb/core-server:${instance.version}`;
+        version = instance.version;
+    } else {
+        image = instance.version;
+        version = instance.version.split(':')[1];
     }
 
     const fileContent = template
-        .replace(/{{ fileservice }}/g, fileServiceUrl)
-        .replace(/{{ version }}/g, instance.version)
+        .replace(/{{ version }}/g, version)
+        .replace(/{{ image }}/g, image)
         .replace(/{{ top_domain }}/g, topdomain)
         .replace(/{{ name }}/g, name)
         .replace(/{{ replicas }}/g, instance.replicas.toString())
