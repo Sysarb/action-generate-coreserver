@@ -73,6 +73,23 @@ spec:
         - name: poststart
           mountPath: /usr/scripts/poststart
         env:
+        # --- .NET runtime sizing -------------------------------------------
+        # These pods have no CPU limit, so without an override the runtime
+        # sees the full node core count (16-28) and sizes Server GC heaps and
+        # ThreadPool worker threads accordingly - per pod. With ~15-20 pods
+        # per node that oversubscribes the CPU badly and shows up as a
+        # sched_yield storm (high system-mode CPU on the node).
+        #
+        # NOTE: DOTNET_/COMPlus_ numeric knobs are parsed as HEXADECIMAL.
+        # Keep values <= 9 so hex and decimal agree.
+        - name: DOTNET_PROCESSOR_COUNT
+          value: "4"
+        # Disable the ThreadPool semaphore spin-wait. The spin is implemented
+        # as sched_yield() on Linux and is the direct source of the syscall
+        # storm; 0 makes workers park immediately instead of spinning.
+        - name: DOTNET_ThreadPool_UnfairSemaphoreSpinLimit
+          value: "0"
+        # -------------------------------------------------------------------
         - name: COMPlus_GCHeapHardLimitSegment
           value: "8589934592"
         - name: DOTNET_SYSARB_API_KEY
