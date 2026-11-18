@@ -1,0 +1,219 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sys-{{ name }}
+  namespace: coreserver
+spec:
+  replicas: {{ replicas }}
+  revisionHistoryLimit: 1
+  selector:
+    matchLabels:
+      app: sys-{{ name }}
+  template:
+    metadata:
+      labels:
+        app: sys-{{ name }}
+    spec:
+      nodeSelector:
+        sysarb_intel: "true"
+      initContainers:
+      - name: coreserver-db-init
+        image: mcr.microsoft.com/mssql-tools
+        command: ["/bin/sh", "-c", "cp /usr/scripts/run-sql.sh /tmp/ && chmod +x /tmp/run-sql.sh && /tmp/run-sql.sh"]
+        volumeMounts:
+        - name: shared-data
+          mountPath: /usr/scripts
+        - name: sql-restore-script
+          mountPath: /usr/scripts2
+        - name: config-volume
+          mountPath: /app/appsettings-template.json
+          subPath: appsettings.json
+        env:
+        - name: MSSQL_CREATOR_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: coreserver-secret
+              key: MSSQL_CREATOR_PASSWORD
+        - name: MSSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: coreserver-secret
+              key: MSSQL_PASSWORD
+        - name: MSSQL_DATA_PATH
+          valueFrom:
+            configMapKeyRef:
+              name: shared-mssql-configmap
+              key: MSSQL_DATA_PATH
+        - name: MSSQL_SERVER
+          valueFrom:
+            configMapKeyRef:
+              name: shared-mssql-configmap
+              key: MSSQL_SERVER
+        - name: DOTNET_SYSARB_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: coreserver-secret
+              key: DOTNET_SYSARB_API_KEY
+      containers:
+      - name: sys-{{ name }}
+        image: {{ image }}
+        lifecycle:
+          postStart:
+            exec:
+              command: ["/bin/bash", "/usr/scripts/poststart/poststart.sh"]
+        resources:
+          requests:
+            memory: "256Mi"  # Requesting 256Mi of memory
+          limits:
+            memory: "16Gi"    # Limiting to 16Gi of memory to avoid cluster getting fubar
+        volumeMounts:
+        - name: config-volume
+          mountPath: /app/appsettings-template.json
+          subPath: appsettings.json
+        - name: poststart
+          mountPath: /usr/scripts/poststart
+        env:
+        - name: COMPlus_GCHeapHardLimitSegment
+          value: "8589934592"
+        - name: DOTNET_SYSARB_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: coreserver-secret
+              key: DOTNET_SYSARB_API_KEY
+        - name: MSSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: coreserver-secret
+              key: MSSQL_PASSWORD
+        - name: DOTNET_ENCRYPTION_KEY
+          valueFrom:
+            secretKeyRef:
+              name: coreserver-secret
+              key: DOTNET_ENCRYPTION_KEY
+        - name: DOTNET_LOGIN_SERVICE_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: coreserver-secret
+              key: DOTNET_LOGIN_SERVICE_API_KEY
+        - name: DOTNET_FILE_SERVICE_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: coreserver-secret
+              key: DOTNET_FILE_SERVICE_SECRET
+        - name: MSSQL_SERVER
+          valueFrom:
+            configMapKeyRef:
+              name: shared-mssql-configmap
+              key: MSSQL_SERVER
+        - name: ASPNETCORE_URLS
+          value: "http://+:80"
+        - name: OTEL_SERVICE_NAME
+          value: sys-{{ name }}-core
+        - name: OTEL_SERVICE_VERSION
+          value: "{{ version }}"
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: "http://signoz-otel-collector.platform.svc.cluster.local:4318"
+        - name: OTEL_EXPORTER_OTLP_PROTOCOL
+          value: "http/protobuf"
+        - name: OTEL_RESOURCE_ATTRIBUTES
+          value: "deployment.environment=production,service.namespace=coreserver"
+        - name: OTEL_TRACES_EXPORTER
+          value: "otlp"
+        - name: OTEL_METRICS_EXPORTER
+          value: "otlp"
+        - name: OTEL_LOGS_EXPORTER
+          value: "otlp"
+      volumes:
+      - name: config-volume
+        configMap:
+          name: sys-{{ name }}-appsettings
+      - name: shared-data
+        configMap:
+          name: coreserver-db-init
+      - name: poststart
+        configMap:
+          name: coreserver-poststart
+          defaultMode: 0755
+      - name: sql-restore-script
+        configMap:
+          name: coreserver-db-template-restore
+      imagePullSecrets:
+      - name: dockerconfigjson-github-com
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sys-{{ name }}-appsettings
+  namespace: coreserver
+data:
+  # Load the content of appsettings.json file as a key-value pair
+  appsettings.json: |
+    {
+    "Logging": {
+      "LogLevel": {
+        "Default": "Warning"
+      }
+    },
+    "DatabaseServerAddress": "{{ mssql_server }}",
+    "DatabaseName": "{{ customer.subdomain }}",
+    "DatabaseUsername": "{{ customer.subdomain }}",
+    "DatabasePassword": "{{ mssql_password }}",
+    "Customer": "{{ customer.subdomain }}",
+    "ProductInstanceName": "SysarbCoreServer - {{ customer.name }} ({{ customer.subdomain }})",
+    "DefaultCulture": "sv-SE",
+    "WebUrl": "https://{{ customer.subdomain }}/",
+    "UseKeyServer": false,
+    "EncryptionKey": "{{ dotnet_encryption_key }}",
+    "EncryptionKeyServer": "",
+    "EncryptionKeyID": "",
+    "EncryptionKeyServerPassword": "",
+    "AppLogLevel": "Debug",
+    "ElasticSearchUrl": "http://elk01.sysarb.se:9200",
+    "FortnoxIntegrationAPI": "https://fortnox-fapp-fortnoxfunc01-d.azurewebsites.net/api/Fortnox",
+    "NewRelic.AgentEnabled": true,
+    "NewRelic.AppName": "Sysarb",
+    "UseSysarbFileService": true,
+    "IsTestEnvironment": false,
+    "UserFriendlyName": "{{ customer.name }}",
+    "FortnoxCustomerNo": "",
+    "Sysarb4ClientAddress": "https://sysarb.{{ top_domain }}",
+    "SysarbApiAddress": "https://sysarb.{{ top_domain }}/api",
+    "SysarbFileServiceAddress": "http://FILE-SERVICE.backend:8090",
+    "LoginServiceAddress": "http://LOGIN-SERVICE.backend:80",
+    "SysarbVerificationServiceAddress": "http://IMPORT-SERVICE.backend:8090",
+    "SysarbVerificationServiceRestAddress": "http://IMPORT-SERVICE.backend:8090",
+    "SysarbPayManagementServiceAddress": "http://PAY-MANAGEMENT-SERVICE.backend:8090",
+    "SysarbPayManagementServiceRestAddress": "http://PAY-MANAGEMENT-SERVICE.backend:8090",
+    "SysarbDiscussionServiceRestAddress": "http://DISCUSSION-SERVICE.backend:8090",
+    "SysarbSyncServiceRestAddress": "http://SYNC-SERVICE.backend:8090",
+    "SysarbMailServiceAddress": "http://MAIL-SERVICE.backend:8090",
+    "SysarbUserServiceAddress": "http://USER-SERVICE.backend:8090",
+    "SysarbPayManagementServiceApiKey": "{{ dotnet_sysarb_api_key }}",
+    "SysarbSyncServiceApiKey": "{{ dotnet_sysarb_api_key }}",
+    "SysarbDiscussionServiceApiKey": "{{ dotnet_sysarb_api_key }}",
+    "SysarbUserServiceApiKey": "{{ dotnet_sysarb_api_key }}",
+    "SysarbVerificationServiceApiKey": "{{ dotnet_sysarb_api_key }}",
+    "SysarbFileServiceSecret": "{{ dotnet_file_service_secret }}",
+    "LoginServiceApiKey": "{{ dotnet_login_service_api_key }}",
+    "AllowedHosts": "*",
+    "SubDomain": "{{ customer.subdomain }}",
+    "TenantId": "{{ tenantId }}"
+    }
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: sys-{{ name }}
+  namespace: coreserver
+spec:
+  selector:
+    app: sys-{{ name }}
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: ClusterIP

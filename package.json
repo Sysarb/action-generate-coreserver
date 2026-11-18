@@ -17,11 +17,11 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
-        "@actions/core": "^1.11.1"
+        "@actions/core": "^3.0.1"
     },
     "devDependencies": {
-        "@types/node": "^24.3.0",
-        "@vercel/ncc": "^0.38.3",
+        "@types/node": "^26.6.6",
+        "@vercel/ncc": "^0.45.0",
         "ts-node": "^10.9.2",
         "typescript": "^5.9.2"
     }
