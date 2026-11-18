@@ -38,10 +38,13 @@ async function generateFile(target: string, template: string, topdomain: string,
     let image = '';
     let version = '';
 
-    // If the version does not include 'ghcr.io/', prepend it with 'ghcr.io/sysarb/core-server:'.
-    // This allows for both full image names and just version numbers to be used in the instance data.
+    // If the version does not include 'ghcr.io/', it is a tag of the image the
+    // sysarb-platform monorepo builds (its core-server-release workflow), so prepend
+    // that image. This allows for both full image names and just tags in the instance data.
+    // A bare tag of the old image (ghcr.io/sysarb/core-server, built by the retired
+    // Sysarb/core-server repo) no longer resolves: pin it as a full image name instead.
     if (!instance.version.includes('ghcr.io/')) {
-        image = `ghcr.io/sysarb/core-server:${instance.version}`;
+        image = `ghcr.io/sysarb/sysarb-platform-core-server:${instance.version}`;
         version = instance.version;
     } else {
         image = instance.version;
